@@ -10,7 +10,9 @@ namespace ConsoleApp12
 {
 	internal class Program
 	{
+		// 定義基礎 URL
 		private static readonly string BaseUrl = "https://pokeapi.co/api/v2/item/";
+		// 初始化 HttpClient 以進行 HTTP 請求。
 		private static HttpClient httpClient = new HttpClient();
 
 		public static async Task Main(string[] args)
@@ -39,6 +41,7 @@ namespace ConsoleApp12
 		private static async Task<int> FetchTotalItemCount()
 		{
 			var response = await httpClient.GetStringAsync(BaseUrl);
+			// 將回應的 JSON 字串反序列化為 ItemsList 類別的實例。
 			var itemsList = JsonSerializer.Deserialize<ItemsList>(response);
 			return itemsList.count;
 		}
@@ -51,13 +54,17 @@ namespace ConsoleApp12
 
 		private static async Task<Item> FetchItemById(int id)
 		{
+			// 創建一個任務列表，用於非同步獲取每個 ID 對應的物品。
 			var response = await httpClient.GetStringAsync(BaseUrl + id);
+			//將結果轉換為一個列表
 			return JsonSerializer.Deserialize<Item>(response);
 		}
 
 		private static async Task<List<Item>> FetchItemsWithCostCondition(int startId, int endId, int maxCost)
 		{
+			// 首先獲取指定範圍內的所有物品。
 			var allItems = await FetchItemsInRange(startId, endId);
+			// 然後根據最大花費進行篩選。
 			return allItems.Where(i => i.cost <= maxCost).ToList();
 		}
 
